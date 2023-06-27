@@ -57,6 +57,7 @@ class Erratum(ErrataConnector):
         self.release_id = 0
         self.qe_email = ''
         self.qe_group = ''
+        self.references = ''
         self.synopsis = None
         self.topic = None
         self.description = None
@@ -120,6 +121,9 @@ class Erratum(ErrataConnector):
             self._update = True
         if 'solution' in kwargs:
             self.solution = self.fmt(kwargs['solution'])
+            self._update = True
+        if 'references' in kwargs:
+            self.references = self.fmt(kwargs['references'])
             self._update = True
 
     def __init__(self, **kwargs):
@@ -298,6 +302,7 @@ https://access.redhat.com/articles/11258")
             self.topic = content['topic']
             self.description = content['description']
             self.solution = content['solution']
+            self.references = content['reference']
             self.errata_bugs = [int(b['bug']['id']) for b
                                 in advisory['bugs']['bugs']]
             self.jira_issues = [k['jira_issue']['key'] for k
@@ -884,6 +889,7 @@ https://access.redhat.com/articles/11258")
         pdata['advisory[topic]'] = self.topic
         pdata['advisory[description]'] = self.description
         pdata['advisory[solution]'] = self.solution
+        pdata['advisory[reference]'] = self.references
 
         # Add back any Vulnerability bugs
         allbugs = list(set(self.errata_bugs) | set(
